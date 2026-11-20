@@ -57,7 +57,11 @@ const countdown = (ms: number, m: Messages) => {
   return `${Math.floor(hours / 24)}${m.day}${hours % 24}h`
 }
 
-type Pace = { symbol: string; color: 'warning' | 'success' | 'subtle' }
+// emptyIn: estimated time until the window hits 100% at the pace so far; only set
+// when the window is close to the limit and would run out before it resets.
+type Pace = { symbol: string; color: 'warning' | 'success' | 'subtle'; ahead: boolean; emptyIn: number | null }
+
+const EMPTY_FROM = 70
 
 // Compares the share of the window used with the share of time already gone:
 // ahead of the clock means the window runs out before it resets.
@@ -66,10 +70,20 @@ const pace = (kind: string, pct: number, left: number | null): Pace | null => {
   if (length === undefined || left === null) return null
   const elapsed = 100 * (1 - Math.min(length, Math.max(0, left)) / length)
   const gap = pct - elapsed
-  if (gap > 5) return { symbol: '▲', color: 'warning' }
-  if (gap < -5) return { symbol: '▼', color: 'success' }
-  return { symbol: '=', color: 'subtle' }
+  // Emoji instead of arrows: 🔥 burning fast, 😌 margin, 👌 on pace.
+  if (gap > 5) {
+    const spent = length - Math.min(length, Math.max(0, left))
+    // Linear projection: pct used in `spent` ms, so the remaining (100 - pct) takes proportionally as long.
+    const toEmpty = pct > 0 && pct < 100 ? ((100 - pct) / pct) * spent : pct >= 100 ? 0 : null
+    const emptyIn = pct >= EMPTY_FROM && toEmpty !== null && toEmpty < left ? toEmpty : null
+    return { symbol: '🔥', color: 'warning', ahead: true, emptyIn }
+  }
+  if (gap < -5) return { symbol: '😌', color: 'success', ahead: false, emptyIn: null }
+  return { symbol: '👌', color: 'subtle', ahead: false, emptyIn: null }
 }
+
+// "🪫 ~45m": time left before the limit at the current pace.
+const empty = (ms: number, m: Messages) => `🪫 ~${countdown(ms, m)}`
 
 const colorFor = (pct: number) => (pct >= 90 ? 'error' : pct >= 70 ? 'warning' : 'success')
 
@@ -189,7 +203,7 @@ export const register: Register = on => {
     const cost = snap.usd === null ? null : `$${snap.usd.toFixed(2)}`
 
     const tight = (await read($, hintOn))
-      ? hint(rows.map(w => ({ kind: w.kind, percentUsed: w.percentUsed, ahead: w.pace?.symbol === '▲' })))
+      ? hint(rows.map(w => ({ kind: w.kind, percentUsed: w.percentUsed, ahead: w.pace?.ahead === true })))
       : null
     const suggestion = tight ? m.hintTight(label(tight.kind, m), tight.percentUsed) : null
     const finish = <T,>(band: T) =>
@@ -218,6 +232,7 @@ export const register: Register = on => {
                   {w.percentUsed}%
                 </Text>
                 {w.pace ? <Text color={w.pace.color}>{w.pace.symbol}</Text> : null}
+                {w.pace?.emptyIn != null ? <Text color="error">{empty(w.pace.emptyIn, m)}</Text> : null}
                 {w.left !== null ? (
                   <Text dimColor>
                     ⟳ {countdown(w.left, m)}
@@ -246,6 +261,7 @@ export const register: Register = on => {
                 {i > 0 ? ' · ' : ''}
                 {label(w.kind, m)} <Text color={colorFor(w.percentUsed)}>{w.percentUsed}%</Text>
                 {w.pace ? <Text color={w.pace.color}> {w.pace.symbol}</Text> : null}
+                {w.pace?.emptyIn != null ? <Text color="error"> {empty(w.pace.emptyIn, m)}</Text> : null}
                 {w.left !== null ? ` ${countdown(w.left, m)}` : ''}
               </Text>
             ))}
@@ -265,6 +281,7 @@ export const register: Register = on => {
               {textBar(w.percentUsed)} {w.percentUsed}%
             </Text>
             {w.pace ? <Text color={w.pace.color}> {w.pace.symbol}</Text> : null}
+            {w.pace?.emptyIn != null ? <Text color="error"> {empty(w.pace.emptyIn, m)}</Text> : null}
             {w.left !== null ? <Text dimColor> · {countdown(w.left, m)}</Text> : null}
           </Text>
         ))}

@@ -6,6 +6,13 @@ All notable changes to usage-band are listed here. The format follows
 
 ## [Unreleased]
 
+### Added
+- Runout estimate `🪫 ~45m`: when a window is at 70% or more and ahead of the
+  clock, projects when it hits 100% at the pace so far (only if before the reset).
+
+### Changed
+- Pace marks are emoji: 🔥 (was ▲), 😌 (was ▼), 👌 (was `=`).
+
 ## [0.4.0] - 2026-11-20
 
 ### Added
