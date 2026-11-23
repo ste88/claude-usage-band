@@ -1,5 +1,6 @@
 {
   "name": "claude-usage-band",
-  "owner": { "name": "ste88" },
+  "description": "usage-band: your Claude plan usage (5h and 7-day windows) and session cost, always visible above the prompt",
+  "owner": { "name": "ste88", "url": "https://github.com/ste88" },
   "plugins": [{ "name": "usage-band", "source": "./" }]
 }
