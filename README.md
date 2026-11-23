@@ -81,6 +81,13 @@ The band also works in the Claude Code VS Code extension: install it from a
 shell with the command above, then reload the window. All three themes render
 above the prompt.
 
+## Releasing
+
+Bump `version` in `.claude-plugin/plugin.json` and add the matching entry to
+`CHANGELOG.md` in the same PR. When it is merged into `main`, the `Release`
+workflow creates the tag and the GitHub release, with that changelog entry as the
+notes. A version whose tag already exists is skipped.
+
 ## License
 
 MIT, see [LICENSE](LICENSE). Changes by version are in [CHANGELOG.md](CHANGELOG.md).
