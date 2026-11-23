@@ -5,12 +5,14 @@ A Claude Code mod that keeps your usage in view: a row above the prompt shows th
 current session's cost, so you don't have to open `/usage`.
 
 ```
-5h ▓▓▓▓▓▓░░░░ 62% ▲ · 2h14m │ 7d ▓▓▓░░░░░░░ 31% ▼ · 3d5h │ session $1.84
+5h ▓▓▓▓▓▓░░░░ 62% 🔥 · 2h14m │ 7d ▓▓▓░░░░░░░ 31% 😌 · 3d5h │ session $1.84
 ```
 
 - Green below 70%, yellow from 70%, red from 90%.
-- Pace: ▲ you are using the window faster than time passes (it may run out before
-  the reset), ▼ you have margin, = on pace.
+- Pace: 🔥 you are using the window faster than time passes (it may run out before
+  the reset), 😌 you have margin, 👌 on pace.
+- Runout estimate: when a window is at 70% or more and 🔥, `🪫 ~45m` projects when it
+  hits 100% at the pace so far (shown only if that is before the reset).
 - A toast warns once per window when it passes 90%.
 - Updates by itself after every turn, whenever a window moves a whole point, and
   every 30 seconds, mid-turn included.
@@ -31,7 +33,7 @@ current one.
 
 - `classic` (default): text bars, compact, as above.
 - `visual`: solid colored bars, bold labels and figures, cost aligned right.
-- `minimal`: figures only, `5h 62% ▲ 2h14m · 7d 31% ▼ 3d5h · $1.84`.
+- `minimal`: figures only, `5h 62% 🔥 2h14m · 7d 31% 😌 3d5h · $1.84`.
 
 ## Language
 
@@ -54,7 +56,7 @@ tests check that it has every key.
 ## Model hint
 
 Off by default. `/usage-band hint on` adds a line under the band when the 5h or
-7-day window is at 70% or more and ahead of the clock (▲), suggesting a lighter
+7-day window is at 70% or more and ahead of the clock (🔥), suggesting a lighter
 model. It only uses the figures the band already shows. `/usage-band hint off`
 turns it off; the choice is remembered across sessions.
 
