@@ -19,6 +19,14 @@ export type Messages = {
   langChange: string
   langUnknown: (code: string) => string
   langSet: (name: string) => string
+  iconsState: (name: string) => string
+  iconsChange: string
+  iconsUnknown: (name: string) => string
+  iconsSet: (name: string) => string
+  runoutState: (value: string) => string
+  runoutChange: string
+  runoutUnknown: (value: string) => string
+  runoutSet: (value: string) => string
 }
 
 const CHANGE_LANG = '/usage-band lang <code|auto>'
@@ -43,6 +51,14 @@ export const MESSAGES: Record<Lang, Messages> = {
     langChange: `Change with ${CHANGE_LANG}`,
     langUnknown: c => `Unknown language: ${c}`,
     langSet: n => `Language: ${n}`,
+    iconsState: n => `Icon set: ${n}`,
+    iconsChange: 'Change with /usage-band icons emoji|beer|fuel|weather|animals',
+    iconsUnknown: n => `Unknown icon set: ${n}`,
+    iconsSet: n => `Icon set: ${n}`,
+    runoutState: v => `Runout estimate: ${v}`,
+    runoutChange: 'Change with /usage-band runout always|off|0-100',
+    runoutUnknown: v => `Unknown runout setting: ${v}`,
+    runoutSet: v => `Runout estimate: ${v}`,
   },
   de: {
     name: 'Deutsch',
@@ -63,6 +79,14 @@ export const MESSAGES: Record<Lang, Messages> = {
     langChange: `Ändern mit ${CHANGE_LANG}`,
     langUnknown: c => `Unbekannte Sprache: ${c}`,
     langSet: n => `Sprache: ${n}`,
+    iconsState: n => `Symbolsatz: ${n}`,
+    iconsChange: 'Ändern mit /usage-band icons emoji|beer|fuel|weather|animals',
+    iconsUnknown: n => `Unbekannter Symbolsatz: ${n}`,
+    iconsSet: n => `Symbolsatz: ${n}`,
+    runoutState: v => `Laufzeit-Schätzung: ${v}`,
+    runoutChange: 'Ändern mit /usage-band runout always|off|0-100',
+    runoutUnknown: v => `Unbekannte Einstellung für die Laufzeit-Schätzung: ${v}`,
+    runoutSet: v => `Laufzeit-Schätzung: ${v}`,
   },
   fr: {
     name: 'Français',
@@ -83,6 +107,14 @@ export const MESSAGES: Record<Lang, Messages> = {
     langChange: `Changer avec ${CHANGE_LANG}`,
     langUnknown: c => `Langue inconnue : ${c}`,
     langSet: n => `Langue : ${n}`,
+    iconsState: n => `Jeu d'icônes : ${n}`,
+    iconsChange: 'Changer avec /usage-band icons emoji|beer|fuel|weather|animals',
+    iconsUnknown: n => `Jeu d'icônes inconnu : ${n}`,
+    iconsSet: n => `Jeu d'icônes : ${n}`,
+    runoutState: v => `Estimation d'épuisement : ${v}`,
+    runoutChange: 'Changer avec /usage-band runout always|off|0-100',
+    runoutUnknown: v => `Réglage d'épuisement inconnu : ${v}`,
+    runoutSet: v => `Estimation d'épuisement : ${v}`,
   },
   it: {
     name: 'Italiano',
@@ -103,6 +135,14 @@ export const MESSAGES: Record<Lang, Messages> = {
     langChange: `Cambia con ${CHANGE_LANG}`,
     langUnknown: c => `Lingua sconosciuta: ${c}`,
     langSet: n => `Lingua: ${n}`,
+    iconsState: n => `Set di icone: ${n}`,
+    iconsChange: 'Cambia con /usage-band icons emoji|beer|fuel|weather|animals',
+    iconsUnknown: n => `Set di icone sconosciuto: ${n}`,
+    iconsSet: n => `Set di icone: ${n}`,
+    runoutState: v => `Stima esaurimento: ${v}`,
+    runoutChange: 'Cambia con /usage-band runout always|off|0-100',
+    runoutUnknown: v => `Impostazione della stima di esaurimento sconosciuta: ${v}`,
+    runoutSet: v => `Stima esaurimento: ${v}`,
   },
   es: {
     name: 'Español',
@@ -123,6 +163,14 @@ export const MESSAGES: Record<Lang, Messages> = {
     langChange: `Cambia con ${CHANGE_LANG}`,
     langUnknown: c => `Idioma desconocido: ${c}`,
     langSet: n => `Idioma: ${n}`,
+    iconsState: n => `Conjunto de iconos: ${n}`,
+    iconsChange: 'Cambia con /usage-band icons emoji|beer|fuel|weather|animals',
+    iconsUnknown: n => `Conjunto de iconos desconocido: ${n}`,
+    iconsSet: n => `Conjunto de iconos: ${n}`,
+    runoutState: v => `Estimación de agotamiento: ${v}`,
+    runoutChange: 'Cambia con /usage-band runout always|off|0-100',
+    runoutUnknown: v => `Ajuste de agotamiento desconocido: ${v}`,
+    runoutSet: v => `Estimación de agotamiento: ${v}`,
   },
   pt: {
     name: 'Português',
@@ -143,6 +191,14 @@ export const MESSAGES: Record<Lang, Messages> = {
     langChange: `Altere com ${CHANGE_LANG}`,
     langUnknown: c => `Idioma desconhecido: ${c}`,
     langSet: n => `Idioma: ${n}`,
+    iconsState: n => `Conjunto de ícones: ${n}`,
+    iconsChange: 'Altere com /usage-band icons emoji|beer|fuel|weather|animals',
+    iconsUnknown: n => `Conjunto de ícones desconhecido: ${n}`,
+    iconsSet: n => `Conjunto de ícones: ${n}`,
+    runoutState: v => `Estimativa de esgotamento: ${v}`,
+    runoutChange: 'Altere com /usage-band runout always|off|0-100',
+    runoutUnknown: v => `Ajuste de esgotamento desconhecido: ${v}`,
+    runoutSet: v => `Estimativa de esgotamento: ${v}`,
   },
   nl: {
     name: 'Nederlands',
@@ -163,6 +219,14 @@ export const MESSAGES: Record<Lang, Messages> = {
     langChange: `Wijzig met ${CHANGE_LANG}`,
     langUnknown: c => `Onbekende taal: ${c}`,
     langSet: n => `Taal: ${n}`,
+    iconsState: n => `Iconenset: ${n}`,
+    iconsChange: 'Wijzig met /usage-band icons emoji|beer|fuel|weather|animals',
+    iconsUnknown: n => `Onbekende iconenset: ${n}`,
+    iconsSet: n => `Iconenset: ${n}`,
+    runoutState: v => `Schatting van uitputting: ${v}`,
+    runoutChange: 'Wijzig met /usage-band runout always|off|0-100',
+    runoutUnknown: v => `Onbekende instelling voor uitputting: ${v}`,
+    runoutSet: v => `Schatting van uitputting: ${v}`,
   },
   pl: {
     name: 'Polski',
@@ -183,6 +247,14 @@ export const MESSAGES: Record<Lang, Messages> = {
     langChange: `Zmień poleceniem ${CHANGE_LANG}`,
     langUnknown: c => `Nieznany język: ${c}`,
     langSet: n => `Język: ${n}`,
+    iconsState: n => `Zestaw ikon: ${n}`,
+    iconsChange: 'Zmień poleceniem /usage-band icons emoji|beer|fuel|weather|animals',
+    iconsUnknown: n => `Nieznany zestaw ikon: ${n}`,
+    iconsSet: n => `Zestaw ikon: ${n}`,
+    runoutState: v => `Szacunek wyczerpania: ${v}`,
+    runoutChange: 'Zmień poleceniem /usage-band runout always|off|0-100',
+    runoutUnknown: v => `Nieznane ustawienie szacunku wyczerpania: ${v}`,
+    runoutSet: v => `Szacunek wyczerpania: ${v}`,
   },
 }
 
