@@ -11,6 +11,12 @@ All notable changes to usage-band are listed here. The format follows
 ### Added
 - Runout estimate `🪫 ~45m`: when a window is at 70% or more and ahead of the
   clock, projects when it hits 100% at the pace so far (only if before the reset).
+- `/usage-band runout always|off|<0-100>`: from which share of a window the runout
+  estimate shows (default 70%). Remembered across sessions.
+- The account signed in (email, and the plan under a managed pin) on the footer row
+  under the prompt, at the right.
+- `/usage-band icons <set>`: pick the marks after the percentages. `emoji` (default,
+  as before), `beer`, `fuel`, `weather` and `animals`. Remembered across sessions.
 
 ### Changed
 - Pace marks are emoji: 🔥 (was ▲), 😌 (was ▼), 👌 (was `=`).

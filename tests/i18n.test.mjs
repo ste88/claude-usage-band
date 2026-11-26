@@ -32,6 +32,8 @@ test('the command syntax is never translated', () => {
     assert.ok(m.themeChange.includes('/usage-band'), lang)
     assert.ok(m.hintChange.includes('/usage-band hint on|off'), lang)
     assert.ok(m.langChange.includes('/usage-band lang'), lang)
+    assert.ok(m.iconsChange.includes('/usage-band icons emoji|beer|fuel|weather|animals'), lang)
+    assert.ok(m.runoutChange.includes('/usage-band runout always|off|0-100'), lang)
   }
 })
 

@@ -11,8 +11,10 @@ current session's cost, so you don't have to open `/usage`.
 - Green below 70%, yellow from 70%, red from 90%.
 - Pace: 🔥 you are using the window faster than time passes (it may run out before
   the reset), 😌 you have margin, 👌 on pace.
-- Runout estimate: when a window is at 70% or more and 🔥, `🪫 ~45m` projects when it
-  hits 100% at the pace so far (shown only if that is before the reset).
+- Runout estimate: `🪫 ~45m` projects when a window hits 100% at the pace so far.
+  It is shown from 70% of the window by default, only if that is before the reset.
+  Change the threshold with `/usage-band runout always|off|<0-100>`, for example
+  `/usage-band runout 50`; the choice is remembered across sessions.
 - A toast warns once per window when it passes 90%.
 - Updates by itself after every turn, whenever a window moves a whole point, and
   every 30 seconds, mid-turn included.
@@ -34,6 +36,32 @@ current one.
 - `classic` (default): text bars, compact, as above.
 - `visual`: solid colored bars, bold labels and figures, cost aligned right.
 - `minimal`: figures only, `5h 62% 🔥 2h14m · 7d 31% 😌 3d5h · $1.84`.
+
+## Icons
+
+The marks after the percentages come from a set picked with
+`/usage-band icons <set>`; the choice is remembered across sessions. `/usage-band icons`
+alone shows the current set.
+
+| Set       | Burning fast | Margin | On pace | Runout  |
+| --------- | ------------ | ------ | ------- | ------- |
+| `emoji`   | 🔥           | 😌     | 👌      | 🪫      |
+| `beer`    | 🍺           | 🧊     | 🍻      | 🥴      |
+| `fuel`    | 🚀           | 🐢     | 🎯      | ⛽      |
+| `weather` | 🌀           | 🌞     | ⛅      | 🌵      |
+| `animals` | 🐇           | 🐢     | 🐎      | 🦴      |
+
+`emoji` is the default. The sets only change the marks: the colors and the figures
+are the same.
+
+## Account
+
+The footer row under the prompt, on the right, shows the account the session is
+signed in with: its email. Under a managed organization pin the plan is added after
+it. Nothing is shown with an API key, a cloud provider, no login, or when the host
+refuses the identity (for example the built-in privacy mod in the user tier). The
+line is read when the session starts, so a login made mid-session shows up in the
+next session.
 
 ## Language
 
