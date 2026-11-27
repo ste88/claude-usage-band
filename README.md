@@ -54,15 +54,6 @@ alone shows the current set.
 `emoji` is the default. The sets only change the marks: the colors and the figures
 are the same.
 
-## Account
-
-The footer row under the prompt, on the right, shows the account the session is
-signed in with: its email. Under a managed organization pin the plan is added after
-it. Nothing is shown with an API key, a cloud provider, no login, or when the host
-refuses the identity (for example the built-in privacy mod in the user tier). The
-line is read when the session starts, so a login made mid-session shows up in the
-next session.
-
 ## Language
 
 English by default. `/usage-band lang <code>` switches the labels, messages and

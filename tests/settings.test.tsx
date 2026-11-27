@@ -13,11 +13,10 @@ const USAGE = {
   cost: { usd: 1.5 },
 }
 
-const setup = (on: Parameters<Parameters<typeof test>[1]>[1], identity: unknown = { kind: 'claude.ai', contextEmail: 'me@example.com', isVerified: true }) => {
+const setup = (on: Parameters<Parameters<typeof test>[1]>[1]) => {
   on('command.register', () => ({ value: { command: 'usage-band' } }))
   on('session.start', (_, e) => ({ cwd: e.cwd }))
   on('session.usage', () => ({ value: USAGE }))
-  on('session.identity', () => ({ value: identity }))
   on('clock.now', () => ({ value: NOW }))
   on('clock.every', () => ({ value: {} }))
   on('store.get', () => ({ value: undefined }))
@@ -47,21 +46,3 @@ test('runout off hides the estimate that the default shows at 80%', async ($, on
   expect(await texts(ui)).not.toContain('🪫')
   await ui.unmount()
 })
-
-test('/usage-band account shows what the host returned', async ($, on) => {
-  setup(on)
-  await $.session.start({ cwd: '/', surface: 'desktop', isInteractive: true })
-  const res = await $.command.run({ command: 'usage-band', args: 'account' })
-  expect(JSON.stringify(res)).toContain('contextEmail me@example.com')
-  expect(JSON.stringify(res)).toContain('beside the prompt: me@example.com')
-})
-
-test('/usage-band account says when the host refused the identity', async ($, on) => {
-  setup(on, { deny: 'privacy: user tier' })
-  await $.session.start({ cwd: '/', surface: 'desktop', isInteractive: true })
-  const res = await $.command.run({ command: 'usage-band', args: 'account' })
-  expect(JSON.stringify(res)).toContain('identity: refused (privacy: user tier)')
-})
-
-// The account line beside the prompt (BesidePrompt) is not mountable in this kit:
-// it is checked live in a session, and its text logic in account.test.mjs.

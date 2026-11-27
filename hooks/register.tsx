@@ -1,5 +1,5 @@
 import { atom, read, update } from 'claude-code'
-import type { Register } from 'claude-code'
+import type { Register, RenderElement } from 'claude-code'
 
 import type { ThemeName, UsageSnapshot, UsageWindow } from '../types'
 import { hint } from './hint'
@@ -7,7 +7,6 @@ import { ICON_SETS, isIconSet } from './icons'
 import type { IconGlyphs } from './icons'
 import { isRunout, parseRunout, RUNOUT_DEFAULT, runoutLabel } from './runout'
 import type { Runout } from './runout'
-import { accountFromConfig, accountLabel } from './account'
 import { detectLang, isLang, LANGS, MESSAGES } from './i18n'
 import type { Lang, Messages } from './i18n'
 
@@ -22,8 +21,6 @@ const hintOn = atom({ plugin: 'usage-band', key: 'hintOn' } as const, false)
 const iconSet = atom({ plugin: 'usage-band', key: 'iconSet' } as const, 'emoji')
 // Share of a window from which the runout estimate shows (/usage-band runout <...>).
 const runoutFrom = atom({ plugin: 'usage-band', key: 'runoutFrom' } as const, RUNOUT_DEFAULT)
-// The account line beside the prompt (email, plan); null when the host shows none.
-const account = atom({ plugin: 'usage-band', key: 'account' } as const, null)
 // Written by the refresh timer: the drawing reads it, so each tick redraws.
 const tick = atom({ plugin: 'usage-band', key: 'tick' } as const, 0)
 
@@ -101,22 +98,6 @@ const toSnapshot = (rateLimits: UsageWindow[], cost?: { usd: number }): UsageSna
   usd: cost ? cost.usd : null,
 })
 
-// The line from the login record on disk, or null. Only what a mod may read: the
-// environment's HOME and the person's ~/.claude.json.
-type LoginSource = {
-  env: { get: (name: string) => Promise<string | undefined> }
-  fs: { read: (path: string) => Promise<string> }
-}
-const loginLine = async (src: LoginSource): Promise<string | null> => {
-  try {
-    const home = await src.env.get('HOME')
-    if (!home) return null
-    return accountLabel(accountFromConfig(await src.fs.read(`${home}/.claude.json`)) ?? {})
-  } catch {
-    return null
-  }
-}
-
 type Row = UsageWindow & { left: number | null; pace: Pace | null }
 
 const themeHelp = (current: ThemeName, m: Messages) =>
@@ -133,7 +114,7 @@ export const register: Register = on => {
     await $.command.register({
       name: 'usage-band',
       description:
-        'Usage bar: /usage-band [classic|visual|minimal], /usage-band hint [on|off], /usage-band lang [code|auto], /usage-band icons [set], /usage-band runout [always|off|0-100], /usage-band account',
+        'Usage bar: /usage-band [classic|visual|minimal], /usage-band hint [on|off], /usage-band lang [code|auto], /usage-band icons [set], /usage-band runout [always|off|0-100]',
     })
 
     const saved = await $.store.get('theme')
@@ -144,14 +125,6 @@ export const register: Register = on => {
     const savedRunout = await $.store.get('runout')
     if (isRunout(savedRunout)) await update($, runoutFrom, () => savedRunout)
     // Read once per session: the host may refuse it (privacy, sec-default), which hides the line.
-    let line: string | null = null
-    try {
-      line = accountLabel(await $.session.identity())
-    } catch {
-      line = null
-    }
-    if (line === null) line = await loginLine($)
-    await update($, account, () => line)
     const savedLang = await $.store.get('lang')
     if (isLang(savedLang)) await update($, lang, () => savedLang)
     else if (savedLang === 'auto') await update($, lang, () => detectLang())
@@ -165,14 +138,6 @@ export const register: Register = on => {
     await refresh()
     $.clock.every(REFRESH_MS, () => void refresh())
     return result
-  })
-
-  // Beside the prompt, on the footer row under it, at the right edge: the account.
-  on('ui.render', { component: 'BesidePrompt' }, async ($, e, next) => {
-    const line = await read($, account)
-    if (line === null || e.props.maxColumns < line.length) return next(e)
-    const { Text } = $.ui.resolve(e)
-    return <Text dimColor>{line}</Text>
   })
 
   on('command.run', { command: 'usage-band' }, async ($, e) => {
@@ -230,36 +195,6 @@ export const register: Register = on => {
       return { text: m.runoutSet(runoutLabel(next)) }
     }
 
-    // Diagnostics for the account line: what the host returns and what is shown.
-    if (words[0] === 'account') {
-      const shown = (await read($, account)) ?? 'nothing'
-      const who = await $.session.identity().catch(() => null)
-      const host =
-        who === null
-          ? 'identity: unavailable'
-          : who.deny !== undefined
-            ? `identity: refused (${who.deny})`
-            : `identity: kind ${who.kind}, contextEmail ${who.contextEmail ?? '-'}, email ${who.email ?? '-'}, organizationType ${who.organizationType ?? '-'}`
-      // The login record fallback, step by step, so a failure says where it stopped.
-      let file: string
-      try {
-        const home = await $.env.get('HOME')
-        if (!home) file = 'HOME is not set'
-        else {
-          try {
-            const text = await $.fs.read(`${home}/.claude.json`)
-            const email = accountFromConfig(text)?.email
-            file = `read ${text.length} characters, login email ${email ?? 'none'}`
-          } catch (err) {
-            file = `read failed: ${String(err)}`
-          }
-        }
-      } catch (err) {
-        file = `HOME lookup failed: ${String(err)}`
-      }
-      return { text: `${host}\nlogin record: ${file}\nbeside the prompt: ${shown}` }
-    }
-
     if (!name) return { text: themeHelp(current, m) }
     if (!isTheme(name)) return { text: `${m.themeUnknown(name)}\n${themeHelp(current, m)}` }
 
@@ -270,11 +205,6 @@ export const register: Register = on => {
 
   on('session.measure', async ($, e, next) => {
     await update($, snapshot, () => toSnapshot(e.rateLimits, e.cost))
-    // Retried after each response until a line is found: the start-of-session lookup can miss.
-    if ((await read($, account)) === null) {
-      const found = await loginLine($)
-      if (found !== null) await update($, account, () => found)
-    }
 
     const already = await read($, warned)
     const m = MESSAGES[await read($, lang)]
@@ -314,7 +244,7 @@ export const register: Register = on => {
       ? hint(rows.map(w => ({ kind: w.kind, percentUsed: w.percentUsed, ahead: w.pace?.ahead === true })))
       : null
     const suggestion = tight ? m.hintTight(label(tight.kind, m), tight.percentUsed) : null
-    const finish = <T,>(band: T) =>
+    const finish = (band: RenderElement) =>
       suggestion ? (
         <Box flexDirection="column">
           {band}

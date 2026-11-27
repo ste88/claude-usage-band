@@ -6,17 +6,19 @@ All notable changes to usage-band are listed here. The format follows
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-11-27
+
+### Added
+- `/usage-band runout always|off|<0-100>`: from which share of a window the runout
+  estimate shows (default 70%). Remembered across sessions.
+- `/usage-band icons <set>`: pick the marks after the percentages. `emoji` (default,
+  as before), `beer`, `fuel`, `weather` and `animals`. Remembered across sessions.
+
 ## [0.5.0] - 2026-11-23
 
 ### Added
 - Runout estimate `🪫 ~45m`: when a window is at 70% or more and ahead of the
   clock, projects when it hits 100% at the pace so far (only if before the reset).
-- `/usage-band runout always|off|<0-100>`: from which share of a window the runout
-  estimate shows (default 70%). Remembered across sessions.
-- The account signed in (email, and the plan under a managed pin) on the footer row
-  under the prompt, at the right.
-- `/usage-band icons <set>`: pick the marks after the percentages. `emoji` (default,
-  as before), `beer`, `fuel`, `weather` and `animals`. Remembered across sessions.
 
 ### Changed
 - Pace marks are emoji: 🔥 (was ▲), 😌 (was ▼), 👌 (was `=`).
@@ -72,7 +74,8 @@ All notable changes to usage-band are listed here. The format follows
 - Colors by threshold: green below 70%, yellow from 70%, red from 90%.
 - A toast once per window when it passes 90%.
 
-[Unreleased]: https://github.com/ste88/claude-usage-band/compare/0.5.0...HEAD
+[Unreleased]: https://github.com/ste88/claude-usage-band/compare/0.6.0...HEAD
+[0.6.0]: https://github.com/ste88/claude-usage-band/compare/0.5.0...0.6.0
 [0.5.0]: https://github.com/ste88/claude-usage-band/compare/0.4.0...0.5.0
 [0.4.0]: https://github.com/ste88/claude-usage-band/compare/0.3.1...0.4.0
 [0.3.1]: https://github.com/ste88/claude-usage-band/compare/0.3.0...0.3.1

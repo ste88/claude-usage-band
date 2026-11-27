@@ -16,7 +16,6 @@ declare module 'claude-code' {
       hintOn: boolean
       iconSet: IconSet
       runoutFrom: number | null
-      account: string | null
     }
   }
 }

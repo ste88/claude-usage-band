@@ -1,6 +1,6 @@
 {
   "name": "usage-band",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Shows the 5h/7d usage windows and session cost in a row above the prompt",
   "author": { "name": "Stefano Marcato", "url": "https://github.com/ste88" },
   "homepage": "https://github.com/ste88/claude-usage-band",
